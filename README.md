@@ -9,11 +9,13 @@ Thus, the models presented here are not simple or straightforward. They include:
 
 ### File structure
 `Exploring_plant_abundance.Rmd` is the initial data exploration of count and cover 
+
 `data/` contains separate csv files of count and cover
+
 `models/` contains 3 models:
-  - `count-invasive` contains the control and model script for invasive grass counts
-  - `cover-invasive` contains the control and model script for invasive grass cover
-  - `cover-native` contains the control and model script for native grass cover
+  - `count-invasive/` contains the control and model script for invasive grass counts
+  - `cover-invasive/` contains the control and model script for invasive grass cover
+  - `cover-native/` contains the control and model script for native grass cover
   
 ### Requirements
 The models run in [JAGS](https://mcmc-jags.sourceforge.io/) using the R packages 'rjags', 'coda', 'mcmcplots', 'tidyverse', and optionally, 'broom.mixed'. 
