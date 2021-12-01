@@ -123,6 +123,6 @@ gel
 # newinits[[1]]
 # saved.state <- removevars(newinits, variables = c(2, 4, 6:7))
 # saved.state[[1]]
-# save(saved.state, file = "models/cover-invasive/inits.Rdata")
+# save(saved.state, file = "models/cover-invasive/inits/inits.Rdata")
 
 save(coda.out, file = "models/cover-invasive/coda/coda.Rdata")
