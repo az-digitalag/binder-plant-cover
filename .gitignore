@@ -7,4 +7,5 @@ data/*.Rdata
 # Suppress files created by knitting the Rmd
 *.html
 Exploring_plant_abundance_files/
+Exploring_plant_abundance_cache/
 .Rhistory
