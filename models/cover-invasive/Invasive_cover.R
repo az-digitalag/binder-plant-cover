@@ -16,7 +16,13 @@ ilogit <- function(x){
 }
 
 # read in data
-dat <- read.csv("data/cover.csv")
+dat <- read.csv("data/cover.csv") %>% 
+  mutate(grazing = factor(grazing, levels = c("ungrazed",
+                                              "fall", 
+                                              "spring")),
+         fuelbreak = factor(fuelbreak, levels = c("control",
+                                                  "herbicide", 
+                                                  "greenstrip")))
 
 # model matrix
 X <- model.matrix( ~ grazing * fuelbreak, data = dat) 
