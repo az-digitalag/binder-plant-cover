@@ -59,7 +59,7 @@ inits <- function(){
 initslist <- list(inits(), inits(), inits())
 
 # Or, use previous starting values + set seed
-load("models/count-invasive/inits/inits_OLRE.Rdata")# saved.state, second element is inits
+load("models/count-invasive/inits/inits.Rdata")# saved.state, second element is inits
 initslist <- list(append(saved.state[[2]][[1]], list(.RNG.name = array("base::Super-Duper"), .RNG.seed = array(13))),
                   append(saved.state[[2]][[2]], list(.RNG.name = array("base::Wichmann-Hill"), .RNG.seed = array(89))),
                   append(saved.state[[2]][[3]], list(.RNG.name = array("base::Mersenne-Twister"), .RNG.seed = array(18))))
@@ -80,7 +80,7 @@ params <- c("deviance", "Dsum", # evaluate fit
             
 
 coda.out <- coda.samples(jm, variable.names = params,
-                         n.iter = 5000, thin = 5)
+                         n.iter = 100000, thin = 50)
 
 # plot chains
 mcmcplot(coda.out, parms = c("deviance", "Dsum", "beta",
@@ -103,7 +103,11 @@ dic.out
 gel <- gelman.diag(coda.out, multivariate = FALSE)
 gel
 
-# Model fit
-params <- c("counts.rep") #monitor replicated data
-coda.rep <- coda.samples(jm, variable.names = params,
-                         n.iter = 5000, thin = 5)
+# If not converged, restart model from final iterations
+# newinits <-  initfind(coda.out)
+# newinits[[1]]
+# saved.state <- removevars(newinits, variables = c(1, 3, 5:7))
+# saved.state[[1]]
+# save(saved.state, file = "models/count-invasive/inits/inits.Rdata")
+
+save(coda.out, file = "models/count-invasive/coda/coda_OLRE.Rdata")
