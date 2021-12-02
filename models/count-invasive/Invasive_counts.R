@@ -8,7 +8,13 @@ library(ggplot2)
 library(dplyr)
 
 # Read in data
-dat <- read.csv("data/count.csv")
+dat <- read.csv("data/count.csv") %>% 
+  mutate(grazing = factor(grazing, levels = c("ungrazed",
+                                              "fall", 
+                                              "spring")),
+         fuelbreak = factor(fuelbreak, levels = c("control",
+                                                  "herbicide", 
+                                                  "greenstrip")))
 
 # Find start and end indices for each block
 tapply(as.numeric(row.names(dat)), dat$block, range)
