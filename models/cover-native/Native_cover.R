@@ -16,7 +16,13 @@ ilogit <- function(x){
 }
 
 # read in data
-dat <- read.csv("data/cover.csv")
+dat <- read.csv("data/cover.csv") %>% 
+  mutate(grazing = factor(grazing, levels = c("ungrazed",
+                                              "fall", 
+                                              "spring")),
+         fuelbreak = factor(fuelbreak, levels = c("control",
+                                                  "herbicide", 
+                                                  "greenstrip")))
 
 # model matrix
 X <- model.matrix( ~ grazing * fuelbreak, data = dat) 
@@ -87,7 +93,7 @@ inits <- function(){
 initslist <- list(inits(), inits(), inits())
 
 # Or, use previous starting values + set seed
-load("models/cover-invasive/inits/inits.Rdata")# saved.state, second element is inits
+load("models/cover-native/inits/inits.Rdata")# saved.state, second element is inits
 initslist <- list(append(saved.state[[2]][[1]], list(.RNG.name = array("base::Super-Duper"), .RNG.seed = array(13))),
                   append(saved.state[[2]][[2]], list(.RNG.name = array("base::Wichmann-Hill"), .RNG.seed = array(89))),
                   append(saved.state[[2]][[3]], list(.RNG.name = array("base::Mersenne-Twister"), .RNG.seed = array(18))))
@@ -143,6 +149,6 @@ gel
 # newinits[[1]]
 # saved.state <- removevars(newinits, variables = c(2, 4, 7:29))
 # saved.state[[1]]
-# save(saved.state, file = "models/cover-native/inits.Rdata")
+# save(saved.state, file = "models/cover-native/inits/inits.Rdata")
 
 save(coda.out, file = "models/cover-native/coda/coda.Rdata")

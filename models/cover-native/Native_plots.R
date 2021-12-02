@@ -1,9 +1,10 @@
 # Plotting output from Native cover model
 
 # Plot model outputs and fit
+library(coda)
 library(broom.mixed)
 library(dplyr)
-library(ggpplot2)
+library(ggplot2)
 library(cowplot)
 
 # logit and antilogit functions
@@ -15,9 +16,14 @@ ilogit <- function(x){
 }
 
 # read in data
-dat <- read.csv("data/cover.csv")
-dat %>% group_by(grazing, fuelbreak) %>%
-  summarize(absent = sum(native_grass == 0))
+dat <- read.csv("data/cover.csv") %>% 
+  mutate(grazing = factor(grazing, levels = c("ungrazed",
+                                              "fall", 
+                                              "spring")),
+         fuelbreak = factor(fuelbreak, levels = c("control",
+                                                  "herbicide", 
+                                                  "greenstrip")))
+
 
 # Load coda and coda.rep
 load(file = "models/cover-native/coda/coda.Rdata") # coda.out
@@ -34,7 +40,7 @@ sum.out <- tidyMCMC(coda.out,
 # All bs
 b.labs <- c("fall", "spring", "herbicide", "greenstrip", 
                "fall:herbicide", "spring:herbicide", "fall:greenstrip", "spring:greenstrip")
-bs <- filter(sum.out, grepl("b\\[", term))
+bs <- filter(sum.out, grepl("^b\\[", term))
 fig1a <- ggplot() +
   geom_pointrange(data = bs, 
                   aes(x = term, y = estimate, ymin = conf.low, ymax = conf.high),
@@ -50,12 +56,11 @@ fig1a <- ggplot() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
         axis.title.x = element_blank()) +
   guides(color = "none")
-fig1a
 
 # All betas
 beta.labs <- c("fall", "spring", "herbicide", "greenstrip", 
                "fall:herbicide", "spring:herbicide", "fall:greenstrip", "spring:greenstrip")
-betas <- filter(sum.out, grepl("beta\\[", term))
+betas <- filter(sum.out, grepl("^beta\\[", term))
 fig1b <- ggplot() +
   geom_pointrange(data = betas, 
                   aes(x = term, y = estimate, ymin = conf.low, ymax = conf.high),
@@ -68,7 +73,6 @@ fig1b <- ggplot() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
         axis.title.x = element_blank()) +
   guides(color = "none")
-fig1b
 
 plot_grid(fig1a, fig1b, ncol = 1, labels = letters)
 
@@ -165,9 +169,6 @@ fig_3d <- ggplot() +
                       ymin = conf.low*100, 
                       ymax = conf.high*100),
                   size = 0.5) +
-  geom_point(data = subset(beta_int, sig == TRUE),
-             aes(x = term, y = min(beta_int$conf.low*100) - 0.5, col = as.factor(dir)),
-             shape = 8) +
   geom_hline(yintercept = 0, lty = 2) +
   scale_y_continuous(expression(paste(Delta, " % cover"))) +
   scale_x_discrete(limits = rev(beta_int$term), labels = rev(labs2)) +
